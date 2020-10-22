@@ -23,6 +23,9 @@ const h2 = dom.querySelector('h2');
 const sections = Array.from(dom.querySelectorAll('section'));
 const fragment = dom.createDocumentFragment();
 let count = 1;
+const lis = nav.children;
+const arrow = dom.querySelector('i');
+const mainHeader = dom.querySelector('header')
 /**
  * End Global Variables
  * Start Helper Functions
@@ -42,10 +45,20 @@ function setAttr(elem, attrs)
 function inViewPort(element)
 {
     let bounds=element.getBoundingClientRect(); 
-    
-    return (
-        bounds.top >=0 && bounds.left>=0 && bounds.right<=(window.innerWidth || document.documentElement.clientWidth) && bounds.bottom<=(window.innerHeight || document.documentElement.clientHeight)
+    if(window.innerWidth <=650+'px')
+    {
+        return (
+            (bounds.top>=0) && 
+            (bounds.bottom<=(window.innerHeight || document.documentElement.clientHeight) * (1.4))
+            );
+    }
+    else
+    {
+        return (
+        bounds.top >=0 && bounds.left>=0 && bounds.right<=(window.innerWidth || document.documentElement.clientWidth) && 
+        (bounds.bottom<=(window.innerHeight || document.documentElement.clientHeight) * (1.6)) 
         );
+    }
 }
 
 
@@ -76,18 +89,19 @@ nav.appendChild(fragment);
 // Add class 'active' to section when near top of viewport
 dom.addEventListener('scroll', function(){
   
-    for(let section of sections)
+for(let section of sections)
+    {
+        if(inViewPort(section))
         {
-            if(inViewPort(section))
-            {
-                section.classList.add('your-active-class');
-            }
-            else{
-                section.classList.remove('your-active-class');
-            }
-    }
-    
+            section.classList.add('your-active-class');
+        }
+        else
+        {
+            section.classList.remove('your-active-class');
+        }
+    }  
 });
+
 
 /* Scroll to anchor ID using scrollTO event*/
 nav.addEventListener('click', function(e){
@@ -96,6 +110,41 @@ nav.addEventListener('click', function(e){
     const sectId = targ.dataset.nav;
     document.getElementById(sectId).scrollIntoView({behavior:"smooth"});
 });
+
+for(let i =0; i<lis.length;i++)
+{
+    let curr = lis[i];
+    curr.addEventListener('click', function(e){
+        for(let j =0; j<lis.length;j++)
+        {
+            lis[j].classList.remove('active');
+        }
+    this.classList.add('active');
+    });
+}
+
+dom.addEventListener('scroll',function(){
+    if((document.body.scrollTop || document.documentElement.scrollTop) > 400)
+    {
+        arrow.style.display='block';
+    }
+    else
+    {
+        arrow.style.display='none';
+    }
+});
+
+arrow.addEventListener('click', function(){
+    document.body.scrollTop =0;
+    document.documentElement.scrollTop = 0;
+});
+
+let posY1 = window.pageYOffset;
+window.onscroll = function(){
+  let posY2 = window.pageYOffset;
+  posY1>posY2 ? mainHeader.style.display ='block': mainHeader.style.display='none';
+  posY1 = posY2;
+}
 
 /**
  * End Main Functions
@@ -108,5 +157,6 @@ nav.addEventListener('click', function(e){
 // Scroll to section on link click
 
 // Set sections as active
+
 
 
